@@ -131,7 +131,7 @@ app.post('/otpsend', async (req, res) => {
 
   
   const client = new Client({
-    node: "https://legalease.es.us-central1.gcp.cloud.es.io:9243",
+    node: "https://f98b758acb094cd4acba4a96ffea8645.es.us-central1.gcp.cloud.es.io:9243",
     auth: {
       username: "elastic",
       password: "EFQhDJEFdFd9ZrDenZCxil2G",
@@ -458,6 +458,8 @@ app.post('/otpsend', async (req, res) => {
   
   app.get("/alladvocates", async (req, res) => {
     const { validity } = req.query;
+    console.log(validity);
+
     const query = {
       index: "legaleaseindex",
       body: {
@@ -467,24 +469,52 @@ app.post('/otpsend', async (req, res) => {
       },
       size: 50,
     };
+    const client = await MongoClient.connect(
+      "mongodb+srv://legalEase:uBR08AiCVFtg2WJd@cluster0.xpnb2yn.mongodb.net/?retryWrites=true&w=majority",
+      {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      }
+    );
+    const database = client.db('legalEase_1'); // Specify the database name
+    const collection = database.collection('data'); // Specify the collection name
+
+    // Fetch all documents in the collection
+    const documents = await collection.find({}).toArray();
   
     try {
-      const response = await client.search(query);
+      // const response = await client.search(query);
+      // if (validity == "true") {
+      //   let data = [];
+      //   for (let index = 0; index < response.hits.hits.length; index++) {
+      //     const element = response.hits.hits[index];
+      //     data.push({
+      //       name: element._source.Name,
+      //       code:
+      //         String(element._source.Name)[0] + String(element._source.Name)[1],
+      //       img: element._source.Profile,
+      //     });
+      //   }
+      //   res.status(201).json(data);
+      // } else {
+      //   res.status(201).json(response.hits.hits);
+      // }
       if (validity == "true") {
-        let data = [];
-        for (let index = 0; index < response.hits.hits.length; index++) {
-          const element = response.hits.hits[index];
-          data.push({
-            name: element._source.Name,
-            code:
-              String(element._source.Name)[0] + String(element._source.Name)[1],
-            img: element._source.Profile,
-          });
+          let data = [];
+          for (let index = 0; index < documents.length; index++) {
+            const element = documents[index];
+            data.push({
+              name: element.Name,
+              code:
+                String(element.Name)[0] + String(element.Name)[1],
+              img: element.Profile,
+            });
+          }
+          res.status(201).json(data);
+        } else {
+          res.status(201).json(documents);
         }
-        res.status(201).json(data);
-      } else {
-        res.status(201).json(response.hits.hits);
-      }
+      
     } catch (error) {
       console.error("Error fetching data:", error);
       res.status(500).json({ error: "An error occurred while fetching data" });
