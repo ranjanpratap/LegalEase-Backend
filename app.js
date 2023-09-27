@@ -458,7 +458,6 @@ app.post('/otpsend', async (req, res) => {
   
   app.get("/alladvocates", async (req, res) => {
     const { validity } = req.query;
-    console.log(validity);
 
     const query = {
       index: "legaleaseindex",
@@ -469,18 +468,7 @@ app.post('/otpsend', async (req, res) => {
       },
       size: 50,
     };
-    const client = await MongoClient.connect(
-      "mongodb+srv://legalEase:uBR08AiCVFtg2WJd@cluster0.xpnb2yn.mongodb.net/?retryWrites=true&w=majority",
-      {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      }
-    );
-    const database = client.db('legalEase_1'); // Specify the database name
-    const collection = database.collection('data'); // Specify the collection name
 
-    // Fetch all documents in the collection
-    const documents = await collection.find({}).toArray();
   
     try {
       const response = await client.search(query);
