@@ -134,7 +134,7 @@ app.post('/otpsend', async (req, res) => {
     node: "https://f98b758acb094cd4acba4a96ffea8645.es.us-central1.gcp.cloud.es.io:9243",
     auth: {
       username: "elastic",
-      password: "EFQhDJEFdFd9ZrDenZCxil2G",
+      password: "CTk04lGeA9YEH3M8NDu2FtLN",
     },
   });
   
@@ -483,37 +483,23 @@ app.post('/otpsend', async (req, res) => {
     const documents = await collection.find({}).toArray();
   
     try {
-      // const response = await client.search(query);
-      // if (validity == "true") {
-      //   let data = [];
-      //   for (let index = 0; index < response.hits.hits.length; index++) {
-      //     const element = response.hits.hits[index];
-      //     data.push({
-      //       name: element._source.Name,
-      //       code:
-      //         String(element._source.Name)[0] + String(element._source.Name)[1],
-      //       img: element._source.Profile,
-      //     });
-      //   }
-      //   res.status(201).json(data);
-      // } else {
-      //   res.status(201).json(response.hits.hits);
-      // }
+      const response = await client.search(query);
       if (validity == "true") {
-          let data = [];
-          for (let index = 0; index < documents.length; index++) {
-            const element = documents[index];
-            data.push({
-              name: element.Name,
-              code:
-                String(element.Name)[0] + String(element.Name)[1],
-              img: element.Profile,
-            });
-          }
-          res.status(201).json(data);
-        } else {
-          res.status(201).json(documents);
+        let data = [];
+        for (let index = 0; index < response.hits.hits.length; index++) {
+          const element = response.hits.hits[index];
+          data.push({
+            name: element._source.Name,
+            code:
+              String(element._source.Name)[0] + String(element._source.Name)[1],
+            img: element._source.Profile,
+          });
         }
+        res.status(201).json(data);
+      } else {
+        res.status(201).json(response.hits.hits);
+      }
+     
       
     } catch (error) {
       console.error("Error fetching data:", error);
