@@ -11,7 +11,7 @@ const port = 3001;
 const {Client} =require('@elastic/elasticsearch');
 const randomstring = require('randomstring');
 const {MongoClient} =require('mongodb');
-const PORT=3001;
+const PORT=process.env.port || 3001;
 const { Vonage } = require('@vonage/server-sdk')
 
 const vonage = new Vonage({
